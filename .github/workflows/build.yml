@@ -1,0 +1,28 @@
+name: Build APK
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - name: Patch app for offline use
+        run: |
+          sed -i '/fonts.googleapis.com/d;/fonts.gstatic.com/d' www/index.html
+          sed -i 's#</head>#<link rel="stylesheet" href="fonts/fonts.css"></head>#' www/index.html
+          sed -i 's#</body>#<script src="native-export.js"></script></body>#' www/index.html
+      - run: npm install
+      - run: npx cap add android
+      - run: npx @capacitor/assets generate --android
+      - run: npx cap sync android
+      - run: chmod +x android/gradlew && cd android && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iron-log-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
