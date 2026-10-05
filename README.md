@@ -60,3 +60,9 @@ Edit `www/index.html`, push to `main`, and a new APK is built automatically. Ins
 - Rest timer
 - Delete or edit past sessions
 - Signed release build
+
+## Preview
+
+![Home page](Home.jpeg)
+![Progress page](Progress.jpeg)
+![History page](History.jpeg)
